@@ -22,7 +22,7 @@ Dn (x)=(x - n) mod26
  
 
 ## PROGRAM:
-
+```
 def encrypt_text(plaintext, n):
     ans = ""
     for i in range(len(plaintext)):
@@ -57,7 +57,7 @@ print("Cipher Text is:", cipher_text)
 
 decrypted_text = decrypt_text(cipher_text, n)
 print("Decrypted Text is:", decrypted_text)
-
+```
 
 ## OUTPUT:
 
