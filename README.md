@@ -60,13 +60,13 @@ print("Decrypted Text is:", decrypted_text)
 ```
 
 ## OUTPUT:
-
+```
 Enter the plain text: Smriti
 Plain Text is: Smriti
 Key is: 4
 Cipher Text is: Wqvmxm
 Decrypted Text is: Smriti
-
+```
 ## RESULT:
 The program is executed successfully
 
@@ -76,27 +76,92 @@ The program is executed successfully
 Playfair Cipher using with different key values
 
 # AIM:
+To implement a program to encrypt a plain text and decrypt a cipher text using play fair
+Cipher substitution technique.
 
-To develop a simple C program to implement PlayFair Cipher.
-
-## DESIGN STEPS:
-
-### Step 1:
-
-Design of PlayFair Cipher algorithnm 
-
-### Step 2:
-
-Implementation using C or pyhton code
-
-### Step 3:
-
-Testing algorithm with different key values. 
+# ALGORITHM :
+The Playfair cipher uses a 5 by 5 table containing a key word or phrase. To generate the key table,
+first fill the spaces in the table with the letters of the keyword, then fill the remaining spaces with
+the rest of the letters of the alphabet in order (usually omitting "Q" to reduce the alphabet to fit;
+other versions put both "I" and "J" in the same space). The key can be written in the top rows of the
+table, from left to right, or in some other pattern, such as a spiral beginning in the upper-left-hand
+corner and ending in the centre.
+The keyword together with the conventions for filling in the 5 by 5 table constitutes the cipher key.
+To encrypt a message, one would break the message into digrams (groups of 2 letters) such that, for
+example, "HelloWorld" becomes "HE LL OW OR LD", and map them out on the key table. Then
+apply the following 4 rules, to each pair of letters in the plaintext:
+1. If both letters are the same (or only one letter is left), add an "X" after the first letter.
+Encrypt the new pair and continue. Some variants of Playfair use "Q" instead of "X", but
+any letter, itself uncommon as a repeated pair, will do.
+2. If the letters appear on the same row of your table, replace them with the letters to their
+immediate right respectively (wrapping around to the left side of the row if a letter in the
+original pair was on the right side of the row).
+3. If the letters appear on the same column of your table, replace them with the letters
+immediately below respectively (wrapping around to the top side of the column if a letter in
+the original pair was on the bottom side of the column).
+4. If the letters are not on the same row or column, replace them with the letters on the same
+row respectively but at the other pair of corners of the rectangle defined by the original pair.
+The order is important – the first letter of the encrypted pair is the one that lies on the same
+row as the first letter of the plaintext pair.
+To decrypt, use the INVERSE (opposite) of the last 3 rules, and the 1st as-is (dropping any extra
+"X"s, or "Q"s that do not make sense in the final message when finished).
 
 ## PROGRAM:
+```
+def create_matrix(key):
+    key = key.replace(" ", "").upper()
+    key = key.replace("J", "I")
+    unique_chars = [char for char in key if char not in {'I', 'J'}] + [chr(i) for i in range(65, 91) if chr(i) not in key and chr(i) != 'J']
 
+    matrix = [unique_chars[i:i + 5] for i in range(0, len(unique_chars), 5)]
+    return matrix
+
+def find_position(matrix, char):
+    for i, row in enumerate(matrix):
+        if char in row:
+            return i, row.index(char)
+
+def playfair_cipher(text, matrix, mode):
+    text = text.upper().replace(" ", "")
+    text = [text[i] if text[i] != text[i + 1] else text[i] + "X" for i in range(0, len(text), 2)] + [text[-1]] if len(text) % 2 != 0 else text
+
+    result = ""
+    for pair in [text[i:i + 2] for i in range(0, len(text), 2)]:
+        (row1, col1), (row2, col2) = [find_position(matrix, char) for char in pair]
+
+        result += matrix[row1][(col1 + mode) % 5] + matrix[row2][(col2 + mode) % 5] if row1 == row2 else \
+                  matrix[(row1 + mode) % 5][col1] + matrix[(row2 + mode) % 5][col2] if col1 == col2 else \
+                  matrix[row1][col2] + matrix[row2][col1]
+
+    return result
+
+def main():
+    key = input("Enter key: ")
+    playfair_matrix = create_matrix(key)
+
+    # Encryption
+    plaintext = input("Enter plaintext: ")
+    ciphertext = playfair_cipher(plaintext, playfair_matrix, 1)
+    print("Cipher Text:", ciphertext)
+
+    # Decryption
+    ciphertext_input = input("Enter ciphertext: ")
+    decrypted_text = playfair_cipher(ciphertext_input, playfair_matrix, -1)
+    print("Decrypted Text:", decrypted_text)
+
+if __name__ == "__main__":
+    main()
+
+```
 ## OUTPUT:
+```
+Enter key: Hello
+Enter plaintext: Smriti
+Cipher Text: XSQKQN
+Enter ciphertext: XSQKQN
+Decrypted Text: SMRITI
 
+```
 ## RESULT:
 The program is executed successfully
 
@@ -121,6 +186,7 @@ The cipher can, be adapted to an alphabet with any number of letters. All arithm
 done modulo the number of letters instead of modulo 26.
 
 ## PROGRAM:
+```
 import numpy as np
 import math
 keyMatrix = np.zeros((3, 3), dtype=int)
@@ -161,14 +227,15 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+```
 
 ## OUTPUT:
+```
 Enter Key:  ATCHENNAI
 Enter Plain Text: SMR
 Ciphertext: CFG
 Decrypted text: SMR
-
+```
 
 ## RESULT:
 The program is executed successfully
@@ -191,6 +258,7 @@ cyclically to the left compared to the previous alphabet, corresponding to the 2
 ciphers. At different points in the encryption process, the cipher uses a different alphabet from one of the rows used. The alphabet at each point depends on a repeating keyword.
 
 ## PROGRAM:
+```
 def generateKey(string, key):
     key = list(key)
     if len(string) == len(key):
@@ -225,15 +293,15 @@ if __name__ == "__main__":
     print("Ciphertext :", cipher_text)
     print("Decrypted Text :", 
            originalText(cipher_text, key))
-
+```
 
 ## OUTPUT:
-
+```
 Enter a plain text: SMRITI
 Enter a key: HELLO
 Ciphertext : ZQCTHP
 Decrypted Text : SMRITI
-
+```
 
 ## RESULT:
 The program is executed successfully
@@ -255,6 +323,7 @@ The message is then read off in rows.
 
 
 ## PROGRAM:
+```
 def encrypt_rail_fence(plain_text, rails):
     len_str = len(plain_text)
     code = [[0] * len_str for _ in range(rails)]
@@ -341,15 +410,16 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+```
 
 
 ## OUTPUT:
+```
 Enter a plain text: IAMSMRITI
 Enter number of rails (Key): 3
 Encrypted Cipher Text: IMIASRTMI
 Decrypted Plain Text: IAMSMRITI
-
+```
 
 ## RESULT:
 The program is executed successfully
